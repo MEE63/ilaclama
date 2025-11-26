@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Sayfanın varsayılan boşluklarını sıfırla */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Kök dizin ve body ekranı tam kaplasın */
+:root, html, body, #root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Yan taşmaları engelle */
+}
+
+/* Varsayılan yazı tipi */
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, #d4dce0 0%, #e8eef1 50%, #d4dce0 100%);
+  background-attachment: fixed;
+  color: #393d3f;
+}
+
+#root {
+  background: transparent;
+}
