@@ -6,9 +6,18 @@ export default function FocusCards() {
   const [expandedIndex, setExpandedIndex] = useState(null)
   const [services, setServices] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     fetchServices()
+    
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   async function fetchServices() {
@@ -76,11 +85,16 @@ export default function FocusCards() {
       <div 
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 350px)',
-          gap: '30px',
+          gridTemplateColumns: isMobile 
+            ? '1fr' 
+            : window.innerWidth < 1100 
+              ? 'repeat(2, minmax(300px, 350px))' 
+              : 'repeat(3, 350px)',
+          gap: isMobile ? '20px' : '30px',
           justifyContent: 'center',
           maxWidth: '1200px',
-          margin: '0 auto'
+          margin: '0 auto',
+          padding: isMobile ? '0 10px' : '0'
         }}
         onMouseLeave={() => setHoveredIndex(null)}
       >
@@ -96,22 +110,25 @@ export default function FocusCards() {
               borderRadius: '20px',
               cursor: 'pointer',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              filter: (hoveredIndex !== null && hoveredIndex !== index && expandedIndex === null) || 
-                      (expandedIndex !== null && expandedIndex !== index) 
+              filter: !isMobile && ((hoveredIndex !== null && hoveredIndex !== index && expandedIndex === null) || 
+                      (expandedIndex !== null && expandedIndex !== index))
                 ? 'blur(3px)' 
                 : 'blur(0px)',
-              opacity: (hoveredIndex !== null && hoveredIndex !== index && expandedIndex === null) || 
-                       (expandedIndex !== null && expandedIndex !== index)
+              opacity: !isMobile && ((hoveredIndex !== null && hoveredIndex !== index && expandedIndex === null) || 
+                       (expandedIndex !== null && expandedIndex !== index))
                 ? 0.6 
                 : 1,
-              transform: hoveredIndex === index && expandedIndex === null ? 'scale(1.02)' : 'scale(1)',
+              transform: !isMobile && hoveredIndex === index && expandedIndex === null ? 'scale(1.02)' : 'scale(1)',
               boxShadow: hoveredIndex === index || expandedIndex === index
                 ? '0 20px 60px rgba(57, 61, 63, 0.3)' 
                 : '0 4px 20px rgba(57, 61, 63, 0.1)',
               border: '1px solid #c6c5b9',
               overflow: 'hidden',
-              width: '350px',
-              height: '570px'
+              width: isMobile ? '100%' : window.innerWidth < 1100 ? 'auto' : '350px',
+              height: isMobile ? 'auto' : '570px',
+              minHeight: isMobile ? '400px' : '570px',
+              maxWidth: isMobile ? '500px' : 'none',
+              margin: isMobile ? '0 auto' : '0'
             }}
           >
             {/* Image */}

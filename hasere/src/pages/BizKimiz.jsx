@@ -5,6 +5,7 @@ import GridBackground from "../components/GridBackground"
 
 export default function BizKimiz() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
   const words = [ 'Güvenilir', 'Etkili', 'Kaliteli']
 
   useEffect(() => {
@@ -12,7 +13,17 @@ export default function BizKimiz() {
       setCurrentWordIndex((prev) => (prev + 1) % words.length)
     }, 3000)
 
-    return () => clearInterval(interval)
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 900)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('resize', checkMobile)
+    }
   }, [words.length])
 
   return (
@@ -28,15 +39,15 @@ export default function BizKimiz() {
         position: 'relative',
         zIndex: 1,
         background: 'transparent',
-        padding: '140px 24px 100px',
+        padding: isMobile ? '100px 20px 60px' : '140px 24px 100px',
         overflow: 'hidden'
       }}>
         <div style={{
           maxWidth: '1400px',
           margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '80px',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? '40px' : '80px',
           alignItems: 'center'
         }}>
           {/* Left Content */}
@@ -120,9 +131,9 @@ export default function BizKimiz() {
             {/* Stats */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '24px',
-              marginTop: '56px'
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+              gap: isMobile ? '16px' : '24px',
+              marginTop: isMobile ? '40px' : '56px'
             }}>
               {[
                 { value: '13+', label: 'Yıl Deneyim' },
@@ -131,7 +142,7 @@ export default function BizKimiz() {
               ].map((stat, index) => (
                 <div key={index} style={{
                   textAlign: 'center',
-                  padding: '28px 20px',
+                  padding: isMobile ? '20px 16px' : '28px 20px',
                   background: 'rgba(253, 253, 255, 0.6)',
                   borderRadius: '16px',
                   backdropFilter: 'blur(10px)',
@@ -140,18 +151,22 @@ export default function BizKimiz() {
                   cursor: 'pointer'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(253, 253, 255, 0.9)'
-                  e.currentTarget.style.transform = 'translateY(-4px)'
-                  e.currentTarget.style.boxShadow = '0 12px 24px rgba(57, 61, 63, 0.08)'
+                  if (!isMobile) {
+                    e.currentTarget.style.background = 'rgba(253, 253, 255, 0.9)'
+                    e.currentTarget.style.transform = 'translateY(-4px)'
+                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(57, 61, 63, 0.08)'
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(253, 253, 255, 0.6)'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = 'none'
+                  if (!isMobile) {
+                    e.currentTarget.style.background = 'rgba(253, 253, 255, 0.6)'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = 'none'
+                  }
                 }}
                 >
                   <h3 style={{
-                    fontSize: '2.25rem',
+                    fontSize: isMobile ? '1.75rem' : '2.25rem',
                     fontWeight: '700',
                     color: '#393d3f',
                     marginBottom: '8px',
@@ -159,7 +174,7 @@ export default function BizKimiz() {
                     letterSpacing: '-0.02em'
                   }}>{stat.value}</h3>
                   <p style={{
-                    fontSize: '0.875rem',
+                    fontSize: isMobile ? '0.8rem' : '0.875rem',
                     color: '#546a7b',
                     margin: 0,
                     fontFamily: 'inherit',
@@ -173,7 +188,8 @@ export default function BizKimiz() {
           {/* Right Image */}
           <div style={{
             position: 'relative',
-            animation: 'fadeInUp 0.8s ease-out 0.2s backwards'
+            animation: 'fadeInUp 0.8s ease-out 0.2s backwards',
+            display: isMobile ? 'none' : 'block'
           }}>
             <div style={{
               background: 'rgba(253, 253, 255, 0.6)',
@@ -184,12 +200,16 @@ export default function BizKimiz() {
               transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)'
-              e.currentTarget.style.boxShadow = '0 24px 48px rgba(57, 61, 63, 0.1)'
+              if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(-8px)'
+                e.currentTarget.style.boxShadow = '0 24px 48px rgba(57, 61, 63, 0.1)'
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = 'none'
+              if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }
             }}
             >
               <img 
@@ -211,34 +231,39 @@ export default function BizKimiz() {
       <section style={{
         position: 'relative',
         zIndex: 1,
-        padding: '120px 24px',
+        padding: isMobile ? '60px 20px' : '120px 24px',
         maxWidth: '1400px',
         margin: '0 auto'
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '100px',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? '40px' : '100px',
           alignItems: 'center'
         }}>
           {/* Left Image */}
           <div style={{
-            position: 'relative'
+            position: 'relative',
+            order: isMobile ? 2 : 1
           }}>
             <div style={{
               background: 'rgba(253, 253, 255, 0.6)',
               borderRadius: '24px',
-              padding: '32px',
+              padding: isMobile ? '20px' : '32px',
               border: '1px solid rgba(57, 61, 63, 0.08)',
               transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)'
-              e.currentTarget.style.boxShadow = '0 24px 48px rgba(57, 61, 63, 0.08)'
+              if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(-8px)'
+                e.currentTarget.style.boxShadow = '0 24px 48px rgba(57, 61, 63, 0.08)'
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = 'none'
+              if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }
             }}
             >
               <img 
@@ -256,18 +281,18 @@ export default function BizKimiz() {
             {/* Floating Badge */}
             <div style={{
               position: 'absolute',
-              bottom: '-24px',
-              right: '-24px',
+              bottom: isMobile ? '-16px' : '-24px',
+              right: isMobile ? '-16px' : '-24px',
               background: 'linear-gradient(135deg, #393d3f 0%, #546a7b 100%)',
-              padding: '32px',
+              padding: isMobile ? '20px' : '32px',
               borderRadius: '20px',
               boxShadow: '0 16px 48px rgba(57, 61, 63, 0.2)',
               textAlign: 'center',
-              minWidth: '180px',
+              minWidth: isMobile ? '140px' : '180px',
               border: '1px solid rgba(253, 253, 255, 0.1)'
             }}>
               <p style={{
-                fontSize: '0.8rem',
+                fontSize: isMobile ? '0.7rem' : '0.8rem',
                 color: 'rgba(253, 253, 255, 0.7)',
                 margin: '0 0 8px 0',
                 fontWeight: '600',
@@ -276,7 +301,7 @@ export default function BizKimiz() {
                 fontFamily: 'inherit'
               }}>Sertifikalı</p>
               <p style={{
-                fontSize: '1.75rem',
+                fontSize: isMobile ? '1.25rem' : '1.75rem',
                 fontWeight: '700',
                 color: '#fdfdff',
                 margin: 0,
@@ -287,7 +312,7 @@ export default function BizKimiz() {
           </div>
 
           {/* Right Content */}
-          <div>
+          <div style={{ order: isMobile ? 1 : 2 }}>
             <p style={{
               fontSize: '0.875rem',
               fontWeight: '600',
@@ -341,9 +366,9 @@ export default function BizKimiz() {
             {/* Features */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '24px',
-              marginTop: '48px'
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: isMobile ? '16px' : '24px',
+              marginTop: isMobile ? '32px' : '48px'
             }}>
               {[
                 { icon: '🎯', title: 'Müşteri Odaklı', desc: 'Beklentileri aşan hizmet' },
@@ -354,8 +379,8 @@ export default function BizKimiz() {
                 <div key={index} style={{
                   display: 'flex',
                   alignItems: 'start',
-                  gap: '16px',
-                  padding: '20px',
+                  gap: isMobile ? '12px' : '16px',
+                  padding: isMobile ? '16px' : '20px',
                   background: 'rgba(253, 253, 255, 0.4)',
                   borderRadius: '16px',
                   border: '1px solid rgba(57, 61, 63, 0.06)',
@@ -363,37 +388,41 @@ export default function BizKimiz() {
                   cursor: 'pointer'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(253, 253, 255, 0.8)'
-                  e.currentTarget.style.transform = 'translateX(4px)'
+                  if (!isMobile) {
+                    e.currentTarget.style.background = 'rgba(253, 253, 255, 0.8)'
+                    e.currentTarget.style.transform = 'translateX(4px)'
+                  }
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(253, 253, 255, 0.4)'
-                  e.currentTarget.style.transform = 'translateX(0)'
+                  if (!isMobile) {
+                    e.currentTarget.style.background = 'rgba(253, 253, 255, 0.4)'
+                    e.currentTarget.style.transform = 'translateX(0)'
+                  }
                 }}
                 >
                   <div style={{
-                    width: '48px',
-                    height: '48px',
+                    width: isMobile ? '40px' : '48px',
+                    height: isMobile ? '40px' : '48px',
                     borderRadius: '12px',
                     background: 'linear-gradient(135deg, #546a7b 0%, #62929e 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1.5rem',
+                    fontSize: isMobile ? '1.25rem' : '1.5rem',
                     flexShrink: 0
                   }}>
                     {feature.icon}
                   </div>
                   <div>
                     <h4 style={{
-                      fontSize: '1.0625rem',
+                      fontSize: isMobile ? '0.95rem' : '1.0625rem',
                       fontWeight: '600',
                       color: '#393d3f',
                       marginBottom: '4px',
                       fontFamily: 'inherit'
                     }}>{feature.title}</h4>
                     <p style={{
-                      fontSize: '0.9375rem',
+                      fontSize: isMobile ? '0.85rem' : '0.9375rem',
                       color: '#546a7b',
                       margin: 0,
                       lineHeight: '1.5',
@@ -413,7 +442,7 @@ export default function BizKimiz() {
         position: 'relative',
         zIndex: 1,
         background: 'linear-gradient(180deg, rgba(232, 238, 241, 0.3) 0%, rgba(212, 223, 229, 0.3) 100%)',
-        padding: '120px 24px',
+        padding: isMobile ? '60px 20px' : '120px 24px',
         backdropFilter: 'blur(10px)'
       }}>
         <div style={{
@@ -421,17 +450,7 @@ export default function BizKimiz() {
           margin: '0 auto',
           textAlign: 'center'
         }}>
-          <p style={{
-            fontSize: '0.875rem',
-            fontWeight: '600',
-            letterSpacing: '2.5px',
-            color: '#546a7b',
-            marginBottom: '24px',
-            textTransform: 'uppercase',
-            fontFamily: 'inherit'
-          }}>
-            Ekibimiz
-          </p>
+         
 
           <h2 style={{
             fontSize: 'clamp(2rem, 4vw, 3rem)',
@@ -459,72 +478,7 @@ export default function BizKimiz() {
             sağlamak için titizlikle çalışmaktadır.
           </p>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '32px',
-            marginTop: '72px'
-          }}>
-            {[
-              { name: 'Ahmet Yılmaz', role: 'Teknik Direktör', img: 'https://via.placeholder.com/300x300/d4dfe5/393d3f?text=AY' },
-              { name: 'Ayşe Demir', role: 'Operasyon Müdürü', img: 'https://via.placeholder.com/300x300/e8eef1/393d3f?text=AD' },
-              { name: 'Mehmet Kaya', role: 'Saha Sorumlusu', img: 'https://via.placeholder.com/300x300/d4dfe5/393d3f?text=MK' },
-              { name: 'Zeynep Şahin', role: 'Müşteri İlişkileri', img: 'https://via.placeholder.com/300x300/e8eef1/393d3f?text=ZS' }
-            ].map((member, index) => (
-              <div
-                key={index}
-                style={{
-                  background: '#fdfdff',
-                  borderRadius: '20px',
-                  overflow: 'hidden',
-                  border: '1px solid rgba(57, 61, 63, 0.08)',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-8px)'
-                  e.currentTarget.style.boxShadow = '0 24px 48px rgba(57, 61, 63, 0.08)'
-                  e.currentTarget.style.borderColor = 'rgba(57, 61, 63, 0.12)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = 'none'
-                  e.currentTarget.style.borderColor = 'rgba(57, 61, 63, 0.08)'
-                }}
-              >
-                <img 
-                  src={member.img}
-                  alt={member.name}
-                  style={{
-                    width: '100%',
-                    height: '300px',
-                    objectFit: 'cover'
-                  }}
-                />
-                <div style={{ padding: '28px', textAlign: 'center' }}>
-                  <h3 style={{
-                    fontSize: '1.25rem',
-                    fontWeight: '600',
-                    color: '#393d3f',
-                    marginBottom: '8px',
-                    fontFamily: 'inherit',
-                    letterSpacing: '-0.01em'
-                  }}>
-                    {member.name}
-                  </h3>
-                  <p style={{
-                    fontSize: '0.9375rem',
-                    color: '#546a7b',
-                    fontWeight: '500',
-                    margin: 0,
-                    fontFamily: 'inherit'
-                  }}>
-                    {member.role}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          
         </div>
       </section>
 
@@ -533,7 +487,7 @@ export default function BizKimiz() {
         position: 'relative',
         zIndex: 1,
         background: 'linear-gradient(135deg, #393d3f 0%, #546a7b 100%)',
-        padding: '100px 24px',
+        padding: isMobile ? '60px 20px' : '100px 24px',
         textAlign: 'center'
       }}>
         <div style={{
@@ -553,25 +507,26 @@ export default function BizKimiz() {
           </h2>
 
           <p style={{
-            fontSize: '1.125rem',
+            fontSize: isMobile ? '1rem' : '1.125rem',
             color: 'rgba(253, 253, 255, 0.85)',
             lineHeight: '1.75',
-            marginBottom: '48px',
+            marginBottom: isMobile ? '32px' : '48px',
             fontFamily: 'inherit',
-            fontWeight: '400'
+            fontWeight: '400',
+            padding: isMobile ? '0 10px' : '0'
           }}>
             Profesyonel ekibimiz, size en uygun çözümü sunmak için hazır.
           </p>
 
           <a href="/iletisim" style={{
             display: 'inline-block',
-            padding: '18px 48px',
+            padding: isMobile ? '14px 32px' : '18px 48px',
             background: 'linear-gradient(135deg, #62929e 0%, #546a7b 100%)',
             color: '#fdfdff',
             textDecoration: 'none',
             borderRadius: '12px',
             fontWeight: '600',
-            fontSize: '1.0625rem',
+            fontSize: isMobile ? '0.95rem' : '1.0625rem',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             letterSpacing: '0.5px',
             boxShadow: '0 12px 32px rgba(98, 146, 158, 0.25)',
@@ -579,12 +534,16 @@ export default function BizKimiz() {
             border: '1px solid rgba(253, 253, 255, 0.1)'
           }}
           onMouseEnter={(e) => {
-            e.target.style.transform = 'translateY(-2px)'
-            e.target.style.boxShadow = '0 16px 40px rgba(98, 146, 158, 0.35)'
+            if (!isMobile) {
+              e.target.style.transform = 'translateY(-2px)'
+              e.target.style.boxShadow = '0 16px 40px rgba(98, 146, 158, 0.35)'
+            }
           }}
           onMouseLeave={(e) => {
-            e.target.style.transform = 'translateY(0)'
-            e.target.style.boxShadow = '0 12px 32px rgba(98, 146, 158, 0.25)'
+            if (!isMobile) {
+              e.target.style.transform = 'translateY(0)'
+              e.target.style.boxShadow = '0 12px 32px rgba(98, 146, 158, 0.25)'
+            }
           }}
           >
             Ücretsiz Teklif Alın

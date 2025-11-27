@@ -11,9 +11,18 @@ export default function Home() {
   // Verileri tutacağımız kutu (State)
   const [bilgi, setBilgi] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     getSiteBilgileri()
+    
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   async function getSiteBilgileri() {
@@ -43,7 +52,7 @@ export default function Home() {
       {/* Carousel ve CTA Section */}
       <section style={{ padding: "80px 24px", maxWidth: "1400px", margin: "0 auto" }}>
         <h2 style={{
-          fontSize: "2.5rem",
+          fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
           fontWeight: "700",
           color: "#393d3f",
           marginBottom: "60px",
@@ -52,11 +61,26 @@ export default function Home() {
           Bazı Haşere Türleri
         </h2>
         
-        <div style={{ display: 'flex', gap: '60px', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-          <div style={{ width: '800px', flexShrink: 0 }}>
+        <div style={{ 
+          display: 'flex', 
+          gap: isMobile ? '40px' : '60px', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          flexDirection: isMobile ? 'column' : 'row'
+        }}>
+          <div style={{ 
+            width: isMobile ? '100%' : '800px', 
+            flexShrink: 0,
+            maxWidth: '100%'
+          }}>
             <PestCarousel />
           </div>
-          <div style={{ width: '380px', flexShrink: 0 }}>
+          <div style={{ 
+            width: isMobile ? '100%' : '380px', 
+            flexShrink: 0,
+            maxWidth: isMobile ? '500px' : '380px',
+            margin: isMobile ? '0 auto' : '0'
+          }}>
             <CTASection />
           </div>
         </div>

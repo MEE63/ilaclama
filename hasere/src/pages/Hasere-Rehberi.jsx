@@ -1,43 +1,56 @@
+import { useState, useEffect } from 'react'
 import { Link } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import GridBackground from "../components/GridBackground"
 
 export default function HasereRehberi() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   const pestCategories = [
     {
       title: "Yürüyen Haşereler",
-      description: "Hamamböceği türleri, karınca, gümüşçün, örümcek, kırkayak vb. kapsar. En sık tıklanacak alan burasıdır.",
+      description: "Genellikle hamam böceği, karınca, gümüş böceği (gümüşçün), örümcek ve kırkayak gibi zemin üzerinde hareket eden zararlı türleridir.",
       image: "https://cdn.pixabay.com/photo/2013/02/01/10/59/giant-hissing-cockroach-77069_960_720.jpg",
       slug: "yuruyen-hasereler"
     },
     {
       title: "Uçan Haşereler", 
-      description: "Karasinek, sivrisinek, arı, yaban arısı, tatarcık vb. kapsar.",
+      description: "Başta sivrisinek, karasinek, yaban arısı ve güve olmak üzere, uçarak hareket eden ve yaşam alanlarını hızla istila edebilen zararlılardır.",
       image: "https://cdn.pixabay.com/photo/2019/08/14/22/02/mosquito-4406812_1280.jpg",
       slug: "ucan-hasereler"
     },
     {
       title: "Kemirgenler",
-      description: "Fare, sıçan, gelincik vb. memeli zararlıları kapsar. Genelde korku faktörü yüksek olduğu için ayrı bir başlık olması iyidir.",
+      description: "Ev faresi, lağım faresi (sıçan) ve çatı faresi gibi güçlü ön dişlere sahip, çok hızlı üreyen ve zeki memeli zararlılardır.",
       image: "https://cdn.pixabay.com/photo/2020/05/06/02/40/house-mouse-5135882_1280.jpg",
       slug: "kemirgenler"
     },
     {
       title: "Kan Emenler & Parazitler",
-      description: "Tahtakurusu, pire, kene, bit gibi insan kanıyla beslenenleri kapsar. İnsanlar bu konuda çok panik olduğu için \"Yürüyenler\"den ayırmak mantıklıdır.",
+      description: "Başta tahtakurusu, pire, kene ve toz akarı olmak üzere; insan veya evcil hayvanların kanıyla beslenen, genellikle yatak, koltuk ve halı gibi alanlara saklanan mikroskobik veya küçük canlılardır.",
       image: "https://cdn.pixabay.com/photo/2023/08/28/07/43/castor-bean-tick-8218542_1280.jpg",
       slug: "kan-emenler"
     },
     {
       title: "Depo ve Gıda Zararlıları",
-      description: "Güve, un bitleri, bakliyat böcekleri gibi mutfak ve kilerde çıkanları kapsar.",
+      description: "Un güvesi, kırma biti, pirinç biti ve ekin kamburu gibi; genellikle mutfak kilerlerinde, depolarda, tahıl silolarında ve kuru bakliyatların içinde yaşayan zararlılardır.",
       image: "https://cdn.pixabay.com/photo/2022/08/17/12/43/moth-7392448_1280.jpg",
       slug: "depo-zararlilari"
     },
     {
       title: "Ahşap ve Yapı Zararlıları",
-      description: "Termitler, tahtakurdu, ağaç kemiren böcekler vb. kapsar.",
+      description: "Halk arasında 'mobilya böceği' olarak da bilinen tahta kurdu ve termitler; evlerdeki mobilya, parke, kapı kasaları ve ahşap çatılarda yaşayan türlerdir.",
       image: "https://cdn.pixabay.com/photo/2019/08/13/23/33/woodworm-4404382_1280.jpg",
       slug: "ahsap-zararlilari"
     }
@@ -87,8 +100,9 @@ export default function HasereRehberi() {
         {/* Pest Categories Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '24px'
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+          gap: 'clamp(16px, 3vw, 24px)',
+          padding: isMobile ? '0 10px' : '0'
         }}>
           {pestCategories.map((category, index) => (
             <Link
@@ -100,15 +114,19 @@ export default function HasereRehberi() {
                 overflow: 'hidden',
                 cursor: 'pointer',
                 transition: 'transform 0.3s ease',
-                height: '280px',
+                height: isMobile ? '240px' : '280px',
                 display: 'block',
                 textDecoration: 'none'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.02)'
+                if (!isMobile) {
+                  e.currentTarget.style.transform = 'scale(1.02)'
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)'
+                if (!isMobile) {
+                  e.currentTarget.style.transform = 'scale(1)'
+                }
               }}
             >
               {/* Background Image */}
@@ -142,24 +160,34 @@ export default function HasereRehberi() {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                padding: '24px',
+                padding: 'clamp(16px, 3vw, 24px)',
                 zIndex: 2,
-                color: '#fdfdff'
+                color: '#fdfdff',
+                maxHeight: '50%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-end'
               }}>
                 <h2 style={{
-                  fontSize: '1.8rem',
+                  fontSize: 'clamp(1.25rem, 3.5vw, 1.8rem)',
                   fontWeight: '700',
-                  marginBottom: '12px',
-                  textShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                  marginBottom: 'clamp(8px, 2vw, 12px)',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                  lineHeight: '1.2'
                 }}>
                   {category.title}
                 </h2>
                 
                 <p style={{
-                  fontSize: '0.95rem',
-                  lineHeight: '1.6',
+                  fontSize: 'clamp(0.8rem, 2vw, 0.95rem)',
+                  lineHeight: '1.5',
                   opacity: 0.95,
-                  textShadow: '0 1px 4px rgba(0,0,0,0.3)'
+                  textShadow: '0 1px 4px rgba(0,0,0,0.3)',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: isMobile ? '2' : '3',
+                  WebkitBoxOrient: 'vertical'
                 }}>
                   {category.description}
                 </p>

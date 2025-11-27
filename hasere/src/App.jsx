@@ -5,7 +5,6 @@ import Hizmetlerimiz from "./pages/Hizmetlerimiz"
 import Iletisim from "./pages/Iletisim"
 import HasereRehberi from "./pages/Hasere-Rehberi"
 import PestDetail from "./pages/PestDetail"
-import Fiyatlandirma from "./pages/Fiyatlandirma"
 import Lisans from "./pages/Lisans"
 import Gizlilik from "./pages/Gizlilik"
 import BizKimiz from "./pages/BizKimiz"
@@ -30,9 +29,6 @@ function App() {
         
         {/* Site adresi /hasere-rehberi/:slug olunca PestDetail açılacak */}
         <Route path="/hasere-rehberi/:slug" element={<PestDetail />} />
-        
-        {/* Site adresi /fiyatlandirma olunca Fiyatlandirma açılacak */}
-        <Route path="/fiyatlandirma" element={<Fiyatlandirma />} />
         
         {/* Site adresi /lisans olunca Lisans açılacak */}
         <Route path="/lisans" element={<Lisans />} />

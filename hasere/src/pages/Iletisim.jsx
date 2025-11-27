@@ -18,9 +18,18 @@ export default function Iletisim() {
   })
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
     fetchContactInfo()
+    
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 900)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   async function fetchContactInfo() {
@@ -80,7 +89,7 @@ export default function Iletisim() {
         margin: '0 auto'
       }}>
         <h1 style={{
-          fontSize: '3rem',
+          fontSize: isMobile ? '2rem' : '3rem',
           fontWeight: '800',
           color: '#393d3f',
           marginBottom: '20px',
@@ -90,12 +99,13 @@ export default function Iletisim() {
         </h1>
         
         <p style={{
-          fontSize: '1.2rem',
+          fontSize: isMobile ? '1rem' : '1.2rem',
           color: '#546a7b',
           textAlign: 'center',
           marginBottom: '60px',
           maxWidth: '600px',
-          margin: '0 auto 60px'
+          margin: '0 auto 60px',
+          padding: isMobile ? '0 10px' : '0'
         }}>
           Bizimle iletişime geçmek için aşağıdaki bilgileri kullanabilirsiniz.
         </p>
@@ -103,26 +113,30 @@ export default function Iletisim() {
         {/* Form and Contact Info Container */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '40px',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? '30px' : '40px',
           marginTop: '40px'
         }}>
           {/* Contact Form */}
           <div style={{
             background: 'linear-gradient(135deg, #393d3f 0%, #546a7b 100%)',
-            padding: '50px',
+            padding: isMobile ? '30px' : '50px',
             borderRadius: '24px',
             boxShadow: '0 20px 60px rgba(57, 61, 63, 0.3)',
             transition: 'transform 0.3s ease, box-shadow 0.3s ease',
             cursor: 'pointer'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-5px)'
-            e.currentTarget.style.boxShadow = '0 25px 70px rgba(57, 61, 63, 0.4)'
+            if (!isMobile) {
+              e.currentTarget.style.transform = 'translateY(-5px)'
+              e.currentTarget.style.boxShadow = '0 25px 70px rgba(57, 61, 63, 0.4)'
+            }
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)'
-            e.currentTarget.style.boxShadow = '0 20px 60px rgba(57, 61, 63, 0.3)'
+            if (!isMobile) {
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 20px 60px rgba(57, 61, 63, 0.3)'
+            }
           }}
           >
             <p style={{
@@ -137,7 +151,7 @@ export default function Iletisim() {
             </p>
             
             <h2 style={{
-              fontSize: '2.5rem',
+              fontSize: isMobile ? '1.75rem' : '2.5rem',
               fontWeight: '800',
               color: '#fdfdff',
               marginBottom: '15px',
@@ -147,9 +161,9 @@ export default function Iletisim() {
             </h2>
             
             <p style={{
-              fontSize: '1rem',
+              fontSize: isMobile ? '0.9rem' : '1rem',
               color: 'rgba(253, 253, 255, 0.8)',
-              marginBottom: '40px',
+              marginBottom: isMobile ? '30px' : '40px',
               lineHeight: '1.6'
             }}>
               Bilgilerinizi bırakın, ekibimiz bir iş günü içinde size geri dönüş yapacaktır.
@@ -214,7 +228,7 @@ export default function Iletisim() {
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '20px' }}>
                 <div style={{ flex: 1 }}>
                   <label style={{
                     display: 'block',
@@ -382,19 +396,23 @@ export default function Iletisim() {
             {/* Contact Details Card */}
             <div style={{
               background: 'linear-gradient(135deg, #2d3436 0%, #393d3f 100%)',
-              padding: '40px',
+              padding: isMobile ? '30px' : '40px',
               borderRadius: '20px',
               boxShadow: '0 10px 40px rgba(57, 61, 63, 0.2)',
               transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)'
-              e.currentTarget.style.boxShadow = '0 15px 50px rgba(57, 61, 63, 0.3)'
+              if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(-5px)'
+                e.currentTarget.style.boxShadow = '0 15px 50px rgba(57, 61, 63, 0.3)'
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = '0 10px 40px rgba(57, 61, 63, 0.2)'
+              if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 10px 40px rgba(57, 61, 63, 0.2)'
+              }
             }}
             >
               <div style={{
@@ -473,17 +491,21 @@ export default function Iletisim() {
               borderRadius: '20px',
               overflow: 'hidden',
               boxShadow: '0 10px 40px rgba(57, 61, 63, 0.2)',
-              height: '350px',
+              height: isMobile ? '300px' : '350px',
               transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-5px)'
-              e.currentTarget.style.boxShadow = '0 15px 50px rgba(57, 61, 63, 0.3)'
+              if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(-5px)'
+                e.currentTarget.style.boxShadow = '0 15px 50px rgba(57, 61, 63, 0.3)'
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)'
-              e.currentTarget.style.boxShadow = '0 10px 40px rgba(57, 61, 63, 0.2)'
+              if (!isMobile) {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 10px 40px rgba(57, 61, 63, 0.2)'
+              }
             }}
             >
               <iframe

@@ -221,7 +221,10 @@ export default function PestCarousel() {
         alignItems: "center",
         gap: "16px",
         marginTop: "40px",
-        width: "100%"
+        width: "100%",
+        position: "relative",
+        left: "50%",
+        transform: "translateX(-50%)"
       }}>
         <button
           onClick={handlePrev}

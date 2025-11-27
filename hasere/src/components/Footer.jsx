@@ -67,18 +67,6 @@ export default function Footer() {
                 </a>
               </li>
               <li style={{ marginBottom: "12px" }}>
-                <Link to="/fiyatlandirma" style={{
-                  color: "#c6c5b9",
-                  textDecoration: "none",
-                  fontSize: "0.95rem",
-                  transition: "color 0.3s"
-                }}
-                onMouseEnter={(e) => e.target.style.color = "#fdfdff"}
-                onMouseLeave={(e) => e.target.style.color = "#c6c5b9"}>
-                  Fiyatlandırma
-                </Link>
-              </li>
-              <li style={{ marginBottom: "12px" }}>
                 <Link to="/hasere-rehberi" style={{
                   color: "#c6c5b9",
                   textDecoration: "none",
