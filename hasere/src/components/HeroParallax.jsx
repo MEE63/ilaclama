@@ -13,7 +13,7 @@ export default function HeroParallax() {
   // Preload image
   useEffect(() => {
     const img = new Image()
-    img.src = '/dosy/himet.jpg'
+    img.src = '/dosy/hizmet.jpg'
     img.onload = () => setImageLoaded(true)
   }, [])
 
@@ -78,7 +78,7 @@ export default function HeroParallax() {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundImage: 'url(/dosy/himet.jpg)',
+        backgroundImage: 'url(/dosy/hizmet.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
