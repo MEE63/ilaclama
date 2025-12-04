@@ -158,8 +158,8 @@ export default function Lisans() {
               fontFamily: 'inherit',
               fontWeight: '400'
             }}>
-              Firmamız, Tarım ve Orman Bakanlığı tarafından verilen resmi biyosidal ürün kullanım yetkisine sahiptir. 
-              Tüm ilaçlama işlemlerimiz bakanlık standartlarına uygun olarak gerçekleştirilmektedir.
+              Firmamız, Tarım ve Orman Bakanlığı tarafından verilen resmi ürün kullanım yetkisine sahiptir. 
+              Tüm kontrol işlemlerimiz bakanlık standartlarına uygun olarak gerçekleştirilmektedir.
             </p>
           </section>
 
@@ -209,7 +209,7 @@ export default function Lisans() {
               fontFamily: 'inherit',
               fontWeight: '400'
             }}>
-              Çevreye duyarlı ilaçlama yöntemlerimiz, Çevre ve Şehircilik Bakanlığı tarafından onaylanmış 
+              Çevreye duyarlı kontrol yöntemlerimiz, Çevre ve Şehircilik Bakanlığı tarafından onaylanmış 
               ve belgelendirilmiştir. Doğaya zarar vermeyen, insan sağlığını ön planda tutan uygulamalar yapıyoruz.
             </p>
           </section>
@@ -260,7 +260,7 @@ export default function Lisans() {
               fontFamily: 'inherit',
               fontWeight: '400'
             }}>
-              Tüm teknik personelimiz, haşere kontrol ve ilaçlama konusunda uluslararası geçerliliği olan 
+              Tüm teknik personelimiz, haşere kontrol konusunda geçerli ve güncel olan 
               sertifikalara sahiptir. Düzenli olarak eğitim ve gelişim programlarına katılmaktadırlar.
             </p>
           </section>
@@ -315,147 +315,7 @@ export default function Lisans() {
           </section>
 
           {/* Certificate Cards */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '24px',
-            marginBottom: '80px',
-            opacity: 0,
-            animation: 'fadeInUp 0.8s ease-out 0.6s forwards'
-          }}>
-            {[
-              { 
-                title: 'Tarım ve Orman Bakanlığı', 
-                subtitle: 'Biyosidal Ürün Kullanım Yetkisi',
-                number: '01'
-              },
-              { 
-                title: 'Çevre ve Şehircilik Bakanlığı', 
-                subtitle: 'Çevre Uygunluk Belgesi',
-                number: '02'
-              },
-              { 
-                title: 'Teknik Personel Sertifikaları', 
-                subtitle: 'Uluslararası Geçerli Belgeler',
-                number: '03'
-              },
-              { 
-                title: 'ISO 9001:2015', 
-                subtitle: 'Kalite Yönetim Sistemi',
-                number: '04'
-              }
-            ].map((cert, index) => (
-              <div
-                key={index}
-                style={{
-                  background: hoveredCard === index 
-                    ? 'linear-gradient(135deg, rgba(98, 146, 158, 0.08) 0%, rgba(84, 106, 123, 0.08) 100%)'
-                    : 'rgba(253, 253, 255, 0.4)',
-                  padding: '40px',
-                  borderRadius: '16px',
-                  border: hoveredCard === index 
-                    ? '1px solid rgba(98, 146, 158, 0.2)' 
-                    : '1px solid rgba(57, 61, 63, 0.08)',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  cursor: 'pointer',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}
-                onMouseEnter={(e) => {
-                  setHoveredCard(index)
-                  e.currentTarget.style.transform = 'translateY(-4px)'
-                  e.currentTarget.style.boxShadow = '0 16px 40px rgba(57, 61, 63, 0.08)'
-                }}
-                onMouseLeave={(e) => {
-                  setHoveredCard(null)
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = 'none'
-                }}
-              >
-                {/* Number Badge */}
-                <div style={{
-                  position: 'absolute',
-                  top: '24px',
-                  right: '24px',
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '12px',
-                  background: hoveredCard === index 
-                    ? 'linear-gradient(135deg, #62929e 0%, #546a7b 100%)'
-                    : 'rgba(84, 106, 123, 0.1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '1.125rem',
-                  fontWeight: '700',
-                  color: hoveredCard === index ? '#fdfdff' : '#546a7b',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                  letterSpacing: '-0.02em'
-                }}>
-                  {cert.number}
-                </div>
-
-                {/* Icon/Badge */}
-                <div style={{
-                  width: '56px',
-                  height: '56px',
-                  marginBottom: '24px',
-                  borderRadius: '12px',
-                  background: hoveredCard === index 
-                    ? 'linear-gradient(135deg, #62929e 0%, #546a7b 100%)'
-                    : 'rgba(84, 106, 123, 0.1)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-                }}>
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
-                      stroke={hoveredCard === index ? '#fdfdff' : '#546a7b'} 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                      style={{ transition: 'stroke 0.4s cubic-bezier(0.4, 0, 0.2, 1)' }}
-                    />
-                  </svg>
-                </div>
-
-                <h3 style={{
-                  fontSize: '1.125rem',
-                  fontWeight: '600',
-                  color: '#393d3f',
-                  marginBottom: '8px',
-                  fontFamily: 'inherit',
-                  letterSpacing: '-0.01em',
-                  lineHeight: '1.4'
-                }}>
-                  {cert.title}
-                </h3>
-                <p style={{
-                  fontSize: '0.9375rem',
-                  color: '#546a7b',
-                  margin: 0,
-                  fontFamily: 'inherit',
-                  fontWeight: '400',
-                  lineHeight: '1.5'
-                }}>
-                  {cert.subtitle}
-                </p>
-
-                {/* Decorative line */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  width: hoveredCard === index ? '100%' : '0%',
-                  height: '3px',
-                  background: 'linear-gradient(90deg, #62929e 0%, #546a7b 100%)',
-                  transition: 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-                }}></div>
-              </div>
-            ))}
-          </div>
+         
 
           {/* CTA Section */}
           <div style={{

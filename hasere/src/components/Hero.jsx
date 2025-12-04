@@ -192,24 +192,7 @@ export default function Hero({ siteInfo }) {
           </a>
         )}
 
-        {/* Rating/Social Proof */}
-        <div style={{
-          marginTop: "50px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "8px",
-          color: "#546a7b",
-          fontSize: "0.95rem"
-        }}>
-          <div style={{ display: "flex", gap: "4px" }}>
-            {[...Array(5)].map((_, i) => (
-              <span key={i} style={{ color: "#62929e", fontSize: "1.2rem" }}>★</span>
-            ))}
-          </div>
-          <span style={{ fontWeight: "600", color: "#393d3f" }}>5.0</span>
-          <span>müşteri memnuniyeti</span>
-        </div>
+       
       </div>
     </section>
   )

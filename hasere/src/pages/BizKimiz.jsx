@@ -2,13 +2,18 @@ import { useState, useEffect } from 'react'
 import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import GridBackground from "../components/GridBackground"
+import { supabase } from '../supabase'
 
 export default function BizKimiz() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
   const [isMobile, setIsMobile] = useState(false)
+  const [heroImage, setHeroImage] = useState('https://via.placeholder.com/600x400/d4dfe5/393d3f?text=Profesyonel+Ekibimiz')
+  const [officeImage, setOfficeImage] = useState('https://via.placeholder.com/500x350/d4dfe5/393d3f?text=Ofisimiz')
   const words = [ 'Güvenilir', 'Etkili', 'Kaliteli']
 
   useEffect(() => {
+    fetchImages()
+    
     const interval = setInterval(() => {
       setCurrentWordIndex((prev) => (prev + 1) % words.length)
     }, 3000)
@@ -25,6 +30,19 @@ export default function BizKimiz() {
       window.removeEventListener('resize', checkMobile)
     }
   }, [words.length])
+
+  async function fetchImages() {
+    const { data, error } = await supabase
+      .from('about_page_settings')
+      .select('hero_image_url, office_image_url')
+      .eq('id', 1)
+      .single()
+    
+    if (data) {
+      if (data.hero_image_url) setHeroImage(data.hero_image_url)
+      if (data.office_image_url) setOfficeImage(data.office_image_url)
+    }
+  }
 
   return (
     <div style={{ position: 'relative' }}>
@@ -127,62 +145,6 @@ export default function BizKimiz() {
               2010 yılından bu yana, sağlıklı yaşam alanları oluşturma misyonuyla hareket ediyoruz. 
               Çevre dostu ürünler ve modern tekniklerle, hem etkili hem de güvenli çözümler üretiyoruz.
             </p>
-
-            {/* Stats */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-              gap: isMobile ? '16px' : '24px',
-              marginTop: isMobile ? '40px' : '56px'
-            }}>
-              {[
-                { value: '13+', label: 'Yıl Deneyim' },
-                { value: '5000+', label: 'Mutlu Müşteri' },
-                { value: '%100', label: 'Garanti' }
-              ].map((stat, index) => (
-                <div key={index} style={{
-                  textAlign: 'center',
-                  padding: isMobile ? '20px 16px' : '28px 20px',
-                  background: 'rgba(253, 253, 255, 0.6)',
-                  borderRadius: '16px',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(57, 61, 63, 0.08)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isMobile) {
-                    e.currentTarget.style.background = 'rgba(253, 253, 255, 0.9)'
-                    e.currentTarget.style.transform = 'translateY(-4px)'
-                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(57, 61, 63, 0.08)'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isMobile) {
-                    e.currentTarget.style.background = 'rgba(253, 253, 255, 0.6)'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = 'none'
-                  }
-                }}
-                >
-                  <h3 style={{
-                    fontSize: isMobile ? '1.75rem' : '2.25rem',
-                    fontWeight: '700',
-                    color: '#393d3f',
-                    marginBottom: '8px',
-                    fontFamily: 'inherit',
-                    letterSpacing: '-0.02em'
-                  }}>{stat.value}</h3>
-                  <p style={{
-                    fontSize: isMobile ? '0.8rem' : '0.875rem',
-                    color: '#546a7b',
-                    margin: 0,
-                    fontFamily: 'inherit',
-                    fontWeight: '500'
-                  }}>{stat.label}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Right Image */}
@@ -213,7 +175,7 @@ export default function BizKimiz() {
             }}
             >
               <img 
-                src="https://via.placeholder.com/600x400/d4dfe5/393d3f?text=Profesyonel+Ekibimiz"
+                src={heroImage}
                 alt="Ekibimiz"
                 style={{
                   width: '100%',
@@ -267,7 +229,7 @@ export default function BizKimiz() {
             }}
             >
               <img 
-                src="https://via.placeholder.com/500x350/d4dfe5/393d3f?text=Ofisimiz"
+                src={officeImage}
                 alt="Ofis"
                 style={{
                   width: '100%',
@@ -371,16 +333,16 @@ export default function BizKimiz() {
               marginTop: isMobile ? '32px' : '48px'
             }}>
               {[
-                { icon: '🎯', title: 'Müşteri Odaklı', desc: 'Beklentileri aşan hizmet' },
-                { icon: '🌱', title: 'Çevre Dostu', desc: 'Sürdürülebilir çözümler' },
-                { icon: '🔬', title: 'Bilimsel Yaklaşım', desc: 'Kanıtlanmış yöntemler' },
-                { icon: '⚡', title: 'Hızlı Hizmet', desc: '24 saat içinde müdahale' }
+                { title: 'Müşteri Odaklı', desc: 'Beklentileri aşan hizmet' },
+                { title: 'Çevre Dostu', desc: 'Sürdürülebilir çözümler' },
+                { title: 'Bilimsel Yaklaşım', desc: 'Kanıtlanmış yöntemler' },
+                { title: 'Hızlı Hizmet', desc: '24 saat içinde müdahale' }
               ].map((feature, index) => (
                 <div key={index} style={{
                   display: 'flex',
-                  alignItems: 'start',
-                  gap: isMobile ? '12px' : '16px',
-                  padding: isMobile ? '16px' : '20px',
+                  flexDirection: 'column',
+                  gap: '8px',
+                  padding: isMobile ? '20px' : '24px',
                   background: 'rgba(253, 253, 255, 0.4)',
                   borderRadius: '16px',
                   border: '1px solid rgba(57, 61, 63, 0.06)',
@@ -390,46 +352,33 @@ export default function BizKimiz() {
                 onMouseEnter={(e) => {
                   if (!isMobile) {
                     e.currentTarget.style.background = 'rgba(253, 253, 255, 0.8)'
-                    e.currentTarget.style.transform = 'translateX(4px)'
+                    e.currentTarget.style.transform = 'translateY(-4px)'
+                    e.currentTarget.style.boxShadow = '0 8px 16px rgba(57, 61, 63, 0.08)'
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isMobile) {
                     e.currentTarget.style.background = 'rgba(253, 253, 255, 0.4)'
-                    e.currentTarget.style.transform = 'translateX(0)'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = 'none'
                   }
                 }}
                 >
-                  <div style={{
-                    width: isMobile ? '40px' : '48px',
-                    height: isMobile ? '40px' : '48px',
-                    borderRadius: '12px',
-                    background: 'linear-gradient(135deg, #546a7b 0%, #62929e 100%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: isMobile ? '1.25rem' : '1.5rem',
-                    flexShrink: 0
-                  }}>
-                    {feature.icon}
-                  </div>
-                  <div>
-                    <h4 style={{
-                      fontSize: isMobile ? '0.95rem' : '1.0625rem',
-                      fontWeight: '600',
-                      color: '#393d3f',
-                      marginBottom: '4px',
-                      fontFamily: 'inherit'
-                    }}>{feature.title}</h4>
-                    <p style={{
-                      fontSize: isMobile ? '0.85rem' : '0.9375rem',
-                      color: '#546a7b',
-                      margin: 0,
-                      lineHeight: '1.5',
-                      fontFamily: 'inherit',
-                      fontWeight: '400'
-                    }}>{feature.desc}</p>
-                  </div>
+                  <h4 style={{
+                    fontSize: isMobile ? '1rem' : '1.125rem',
+                    fontWeight: '600',
+                    color: '#393d3f',
+                    margin: 0,
+                    fontFamily: 'inherit'
+                  }}>{feature.title}</h4>
+                  <p style={{
+                    fontSize: isMobile ? '0.875rem' : '0.9375rem',
+                    color: '#546a7b',
+                    margin: 0,
+                    lineHeight: '1.5',
+                    fontFamily: 'inherit',
+                    fontWeight: '400'
+                  }}>{feature.desc}</p>
                 </div>
               ))}
             </div>

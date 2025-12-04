@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { supabase } from "../supabase"
+import { useAuth } from "../contexts/AuthContext"
 
 export default function Navbar() {
   const [siteInfo, setSiteInfo] = useState(null)
   const [isMobile, setIsMobile] = useState(false)
   const [loading, setLoading] = useState(true)
+  const { isAdmin } = useAuth()
 
   useEffect(() => {
     getSiteInfo()
@@ -184,31 +186,33 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* CTA Button */}
-        <Link to="/admin" style={{
-          textDecoration: "none",
-          backgroundColor: "#393d3f",
-          color: "#fdfdff",
-          padding: isMobile ? "8px 16px" : "12px 28px",
-          borderRadius: "8px",
-          fontSize: isMobile ? "12px" : "15px",
-          fontWeight: "600",
-          transition: "all 0.2s",
-          whiteSpace: "nowrap",
-          flexShrink: 0,
-          position: isMobile ? "static" : "absolute",
-          right: isMobile ? "auto" : "24px"
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.backgroundColor = "#546a7b"
-          e.target.style.transform = "translateY(-1px)"
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.backgroundColor = "#393d3f"
-          e.target.style.transform = "translateY(0)"
-        }}>
-          {isMobile ? "Yönetim" : "Yönetim Paneli"}
-        </Link>
+        {/* CTA Button - Sadece admin görebilir */}
+        {isAdmin && (
+          <Link to="/admin" style={{
+            textDecoration: "none",
+            backgroundColor: "#393d3f",
+            color: "#fdfdff",
+            padding: isMobile ? "8px 16px" : "12px 28px",
+            borderRadius: "8px",
+            fontSize: isMobile ? "12px" : "15px",
+            fontWeight: "600",
+            transition: "all 0.2s",
+            whiteSpace: "nowrap",
+            flexShrink: 0,
+            position: isMobile ? "static" : "absolute",
+            right: isMobile ? "auto" : "24px"
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = "#546a7b"
+            e.target.style.transform = "translateY(-1px)"
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = "#393d3f"
+            e.target.style.transform = "translateY(0)"
+          }}>
+            {isMobile ? "Yönetim" : "Yönetim Paneli"}
+          </Link>
+        )}
       </div>
     </nav>
   )

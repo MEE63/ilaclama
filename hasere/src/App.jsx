@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
 import Admin from "./pages/Admin"
+import Login from "./pages/Login"
 import Hizmetlerimiz from "./pages/Hizmetlerimiz"
 import Iletisim from "./pages/Iletisim"
 import HasereRehberi from "./pages/Hasere-Rehberi"
@@ -9,6 +10,7 @@ import Lisans from "./pages/Lisans"
 import Gizlilik from "./pages/Gizlilik"
 import BizKimiz from "./pages/BizKimiz"
 import ScrollToTop from "./components/ScrollToTop"
+import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
   return (
@@ -39,8 +41,15 @@ function App() {
         {/* Site adresi /biz-kimiz olunca BizKimiz açılacak */}
         <Route path="/biz-kimiz" element={<BizKimiz />} />
         
-        {/* Site adresi /admin olunca Admin açılacak */}
-        <Route path="/admin" element={<Admin />} />
+        {/* Site adresi /login olunca Login açılacak */}
+        <Route path="/login" element={<Login />} />
+        
+        {/* Site adresi /admin olunca Admin açılacak - Sadece admin erişebilir */}
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <Admin />
+          </ProtectedRoute>
+        } />
       </Routes>
     </BrowserRouter>
   )

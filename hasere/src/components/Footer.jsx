@@ -148,7 +148,7 @@ export default function Footer() {
               fontSize: "0.9rem",
               margin: '0 0 8px 0'
             }}>
-              © 2024 Haşere İlaçlama. Tüm hakları saklıdır.
+              © 2025 MB Haşere Mücadele. Tüm hakları saklıdır.
             </p>
             {address && (
               <p style={{

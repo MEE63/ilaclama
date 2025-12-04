@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabase'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import CTAAdmin from '../components/CTAAdmin'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function Admin() {
+  const { user, signOut } = useAuth()
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
-  const [activeTab, setActiveTab] = useState('site') // 'site', 'pests', 'cta', 'services', 'contact'
+  const [activeTab, setActiveTab] = useState('site') // 'site', 'pests', 'cta', 'services', 'contact', 'about', 'admins'
   
   // Site ayarları form
   const [formData, setFormData] = useState({
@@ -49,6 +52,19 @@ export default function Admin() {
   // Form gönderileri
   const [submissions, setSubmissions] = useState([])
 
+  // Biz Kimiz sayfası ayarları
+  const [aboutSettings, setAboutSettings] = useState({
+    hero_image_url: '',
+    office_image_url: ''
+  })
+
+  // Yönetici yönetimi
+  const [adminForm, setAdminForm] = useState({
+    email: '',
+    password: ''
+  })
+  const [admins, setAdmins] = useState([])
+
   // 1. Sayfa açılınca mevcut ayarları getir
   useEffect(() => {
     fetchSettings()
@@ -56,6 +72,8 @@ export default function Admin() {
     fetchServices()
     fetchContactInfo()
     fetchSubmissions()
+    fetchAboutSettings()
+    fetchAdmins()
   }, [])
 
   // İletişim bilgilerini getir
@@ -487,6 +505,141 @@ export default function Admin() {
     setServiceForm({ ...serviceForm, [e.target.name]: e.target.value })
   }
 
+  // BİZ KİMİZ SAYFA AYARLARI FONKSİYONLARI
+  async function fetchAboutSettings() {
+    const { data, error } = await supabase
+      .from('about_page_settings')
+      .select('*')
+      .eq('id', 1)
+      .single()
+    
+    if (error) {
+      console.error('Biz Kimiz ayarları çekme hatası:', error)
+    }
+    
+    if (data) {
+      setAboutSettings(data)
+    }
+  }
+
+  const handleAboutImageUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    setLoading(true)
+    setMessage("Resim yükleniyor...")
+
+    const fileName = `about/${Date.now()}_${file.name}`
+
+    const { error } = await supabase.storage
+      .from('assets')
+      .upload(fileName, file)
+
+    if (error) {
+      setMessage("Resim yüklenirken hata oldu!")
+      setLoading(false)
+      return
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('assets')
+      .getPublicUrl(fileName)
+
+    setAboutSettings({ ...aboutSettings, hero_image_url: urlData.publicUrl })
+    
+    // Hemen veritabanına kaydet
+    const { error: updateError } = await supabase
+      .from('about_page_settings')
+      .update({ hero_image_url: urlData.publicUrl, updated_at: new Date() })
+      .eq('id', 1)
+
+    if (!updateError) {
+      setMessage("✅ Resim yüklendi ve kaydedildi!")
+    } else {
+      setMessage("❌ Resim yüklendi ama kayıt hatası: " + updateError.message)
+    }
+    setLoading(false)
+  }
+
+  const handleAboutImageRemove = async () => {
+    if (!confirm('Resmi kaldırmak istediğinize emin misiniz?')) return
+
+    setLoading(true)
+    setMessage("Resim kaldırılıyor...")
+
+    const { error } = await supabase
+      .from('about_page_settings')
+      .update({ hero_image_url: '', updated_at: new Date() })
+      .eq('id', 1)
+
+    if (!error) {
+      setAboutSettings({ ...aboutSettings, hero_image_url: '' })
+      setMessage("✅ Resim kaldırıldı!")
+    } else {
+      setMessage("❌ Hata: " + error.message)
+    }
+    setLoading(false)
+  }
+
+  const handleOfficeImageUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    setLoading(true)
+    setMessage("Ofis resmi yükleniyor...")
+
+    const fileName = `about/office_${Date.now()}_${file.name}`
+
+    const { error } = await supabase.storage
+      .from('assets')
+      .upload(fileName, file)
+
+    if (error) {
+      setMessage("Resim yüklenirken hata oldu!")
+      setLoading(false)
+      return
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('assets')
+      .getPublicUrl(fileName)
+
+    setAboutSettings({ ...aboutSettings, office_image_url: urlData.publicUrl })
+    
+    // Hemen veritabanına kaydet
+    const { error: updateError } = await supabase
+      .from('about_page_settings')
+      .update({ office_image_url: urlData.publicUrl, updated_at: new Date() })
+      .eq('id', 1)
+
+    if (!updateError) {
+      setMessage("✅ Ofis resmi yüklendi ve kaydedildi!")
+    } else {
+      setMessage("❌ Resim yüklendi ama kayıt hatası: " + updateError.message)
+    }
+    setLoading(false)
+  }
+
+  const handleOfficeImageRemove = async () => {
+    if (!confirm('Ofis resmini kaldırmak istediğinize emin misiniz?')) return
+
+    setLoading(true)
+    setMessage("Ofis resmi kaldırılıyor...")
+
+    const { error } = await supabase
+      .from('about_page_settings')
+      .update({ office_image_url: '', updated_at: new Date() })
+      .eq('id', 1)
+
+    if (!error) {
+      setAboutSettings({ ...aboutSettings, office_image_url: '' })
+      setMessage("✅ Ofis resmi kaldırıldı!")
+    } else {
+      setMessage("❌ Hata: " + error.message)
+    }
+    setLoading(false)
+  }
+
   // İLETİŞİM BİLGİLERİ FONKSİYONLARI
   async function fetchContactInfo() {
     const { data, error } = await supabase
@@ -519,12 +672,130 @@ export default function Admin() {
     }
   }
 
+  // YÖNETİCİ YÖNETİMİ FONKSİYONLARI
+  async function fetchAdmins() {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('is_admin', true)
+      .order('created_at', { ascending: false })
+    
+    if (error) {
+      console.error('Yöneticiler çekme hatası:', error)
+    }
+    
+    if (data) {
+      setAdmins(data)
+    }
+  }
+
+  const handleAdminCreate = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage("Yeni yönetici oluşturuluyor...")
+
+    try {
+      // 1. Yeni kullanıcı oluştur
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: adminForm.email,
+        password: adminForm.password,
+        options: {
+          emailRedirectTo: window.location.origin
+        }
+      })
+
+      if (authError) {
+        setMessage("❌ Hata: " + authError.message)
+        setLoading(false)
+        return
+      }
+
+      // 2. Kullanıcının profilini admin olarak güncelle
+      if (authData.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ is_admin: true })
+          .eq('id', authData.user.id)
+
+        if (profileError) {
+          setMessage("❌ Profil güncelleme hatası: " + profileError.message)
+        } else {
+          setMessage("✅ Yeni yönetici başarıyla oluşturuldu! Kullanıcı email adresini doğrulamalıdır.")
+          setAdminForm({ email: '', password: '' })
+          await fetchAdmins()
+        }
+      }
+    } catch (error) {
+      setMessage("❌ Beklenmeyen hata: " + error.message)
+    }
+
+    setLoading(false)
+  }
+
+  const handleAdminDelete = async (adminId, adminEmail) => {
+    if (adminId === user?.id) {
+      setMessage("❌ Kendi hesabınızı silemezsiniz!")
+      return
+    }
+
+    if (!confirm(`${adminEmail} adresli yöneticiyi silmek istediğinize emin misiniz?`)) return
+
+    setLoading(true)
+    setMessage("Yönetici siliniyor...")
+
+    try {
+      // Profili sil (CASCADE ile auth.users'dan da silinecek)
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', adminId)
+
+      if (!error) {
+        setMessage("✅ Yönetici silindi!")
+        await fetchAdmins()
+      } else {
+        setMessage("❌ Hata: " + error.message)
+      }
+    } catch (error) {
+      setMessage("❌ Beklenmeyen hata: " + error.message)
+    }
+
+    setLoading(false)
+  }
+
+  const handleAdminFormChange = (e) => {
+    setAdminForm({ ...adminForm, [e.target.name]: e.target.value })
+  }
+
   return (
     <div style={{ maxWidth: "900px", margin: "40px auto", padding: "20px" }}>
       
-      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'30px'}}>
-        <h2>⚙️ Admin Paneli</h2>
-        <Link to="/" style={{textDecoration:'none', color:'#546a7b', fontWeight:'600'}}>← Siteyi Gör</Link>
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'30px', flexWrap:'wrap', gap:'15px'}}>
+        <div>
+          <h2 style={{margin:'0 0 5px 0'}}>⚙️ Admin Paneli</h2>
+          <p style={{margin:0, fontSize:'14px', color:'#546a7b'}}>Hoş geldin, {user?.email}</p>
+        </div>
+        <div style={{display:'flex', gap:'10px'}}>
+          <Link to="/" style={{textDecoration:'none', color:'#546a7b', fontWeight:'600', padding:'8px 16px', border:'1px solid #c6c5b9', borderRadius:'6px'}}>← Siteyi Gör</Link>
+          <button 
+            onClick={async () => {
+              await signOut()
+              navigate('/')
+            }}
+            style={{
+              padding:'8px 16px',
+              background:'#c6c5b9',
+              color:'#393d3f',
+              border:'none',
+              borderRadius:'6px',
+              cursor:'pointer',
+              fontWeight:'600',
+              fontSize:'14px'
+            }}
+          >
+            Çıkış Yap
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -603,6 +874,36 @@ export default function Admin() {
           }}
         >
           İletişim
+        </button>
+        <button
+          onClick={() => setActiveTab('about')}
+          style={{
+            padding:'12px 24px',
+            background: activeTab === 'about' ? '#546a7b' : 'transparent',
+            color: activeTab === 'about' ? '#fdfdff' : '#546a7b',
+            border:'none',
+            borderRadius:'8px 8px 0 0',
+            cursor:'pointer',
+            fontWeight:'600',
+            fontSize:'15px'
+          }}
+        >
+          Biz Kimiz
+        </button>
+        <button
+          onClick={() => setActiveTab('admins')}
+          style={{
+            padding:'12px 24px',
+            background: activeTab === 'admins' ? '#546a7b' : 'transparent',
+            color: activeTab === 'admins' ? '#fdfdff' : '#546a7b',
+            border:'none',
+            borderRadius:'8px 8px 0 0',
+            cursor:'pointer',
+            fontWeight:'600',
+            fontSize:'15px'
+          }}
+        >
+          Yöneticiler
         </button>
       </div>
 
@@ -943,6 +1244,131 @@ export default function Admin() {
         </div>
       )}
 
+      {/* Biz Kimiz Tab */}
+      {activeTab === 'about' && (
+        <div>
+          {/* Hero Görseli */}
+          <div style={{ background:'#fdfdff', padding:'24px', borderRadius:'12px', border:'1px solid #c6c5b9', marginBottom:'20px' }}>
+            <h3 style={{margin:'0 0 15px 0', color:'#393d3f'}}>Hero Görseli (Üst Bölüm)</h3>
+            <p style={{margin:'0 0 20px 0', color:'#546a7b', fontSize:'14px'}}>
+              Bu görsel "Biz Kimiz" sayfasının üst kısmında görünecektir. Önerilen boyut: 600x400px
+            </p>
+            
+            <div style={{ border: '1px dashed #c6c5b9', padding: '20px', borderRadius: '8px', textAlign:'center' }}>
+              {aboutSettings.hero_image_url ? (
+                <div style={{position:'relative', display:'inline-block', marginBottom:'15px'}}>
+                  <img 
+                    src={aboutSettings.hero_image_url} 
+                    alt="Hero" 
+                    style={{ maxWidth: '100%', maxHeight: '300px', borderRadius:'8px', display:'block' }} 
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAboutImageRemove}
+                    disabled={loading}
+                    style={{
+                      marginTop:'15px',
+                      padding:'10px 20px',
+                      background:'#c6c5b9',
+                      color:'#393d3f',
+                      border:'none',
+                      borderRadius:'6px',
+                      cursor:'pointer',
+                      fontSize:'14px',
+                      fontWeight:'600'
+                    }}
+                  >
+                    {loading ? 'İşleniyor...' : 'Resmi Kaldır'}
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p style={{color:'#546a7b', marginBottom:'15px'}}>Henüz resim yüklenmemiş</p>
+                  <input 
+                    type="file" 
+                    onChange={handleAboutImageUpload} 
+                    accept="image/*"
+                    disabled={loading}
+                  />
+                </div>
+              )}
+              
+              {aboutSettings.hero_image_url && (
+                <div style={{marginTop:'15px', paddingTop:'15px', borderTop:'1px solid #c6c5b9'}}>
+                  <p style={{color:'#546a7b', marginBottom:'10px', fontSize:'14px'}}>Resmi değiştirmek için yeni bir resim seçin:</p>
+                  <input 
+                    type="file" 
+                    onChange={handleAboutImageUpload} 
+                    accept="image/*"
+                    disabled={loading}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Ofis Görseli */}
+          <div style={{ background:'#fdfdff', padding:'24px', borderRadius:'12px', border:'1px solid #c6c5b9' }}>
+            <h3 style={{margin:'0 0 15px 0', color:'#393d3f'}}>Ofis Görseli (Hikayemiz Bölümü)</h3>
+            <p style={{margin:'0 0 20px 0', color:'#546a7b', fontSize:'14px'}}>
+              Bu görsel "Hikayemiz" bölümünde görünecektir. Önerilen boyut: 500x350px
+            </p>
+            
+            <div style={{ border: '1px dashed #c6c5b9', padding: '20px', borderRadius: '8px', textAlign:'center' }}>
+              {aboutSettings.office_image_url ? (
+                <div style={{position:'relative', display:'inline-block', marginBottom:'15px'}}>
+                  <img 
+                    src={aboutSettings.office_image_url} 
+                    alt="Ofis" 
+                    style={{ maxWidth: '100%', maxHeight: '300px', borderRadius:'8px', display:'block' }} 
+                  />
+                  <button
+                    type="button"
+                    onClick={handleOfficeImageRemove}
+                    disabled={loading}
+                    style={{
+                      marginTop:'15px',
+                      padding:'10px 20px',
+                      background:'#c6c5b9',
+                      color:'#393d3f',
+                      border:'none',
+                      borderRadius:'6px',
+                      cursor:'pointer',
+                      fontSize:'14px',
+                      fontWeight:'600'
+                    }}
+                  >
+                    {loading ? 'İşleniyor...' : 'Resmi Kaldır'}
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p style={{color:'#546a7b', marginBottom:'15px'}}>Henüz resim yüklenmemiş</p>
+                  <input 
+                    type="file" 
+                    onChange={handleOfficeImageUpload} 
+                    accept="image/*"
+                    disabled={loading}
+                  />
+                </div>
+              )}
+              
+              {aboutSettings.office_image_url && (
+                <div style={{marginTop:'15px', paddingTop:'15px', borderTop:'1px solid #c6c5b9'}}>
+                  <p style={{color:'#546a7b', marginBottom:'10px', fontSize:'14px'}}>Resmi değiştirmek için yeni bir resim seçin:</p>
+                  <input 
+                    type="file" 
+                    onChange={handleOfficeImageUpload} 
+                    accept="image/*"
+                    disabled={loading}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* İletişim Tab */}
       {activeTab === 'contact' && (
         <div>
@@ -1046,6 +1472,111 @@ export default function Admin() {
                 ))}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Yöneticiler Tab */}
+      {activeTab === 'admins' && (
+        <div>
+          {/* Yeni Yönetici Ekleme Formu */}
+          <form onSubmit={handleAdminCreate} style={{ display: 'flex', flexDirection: 'column', gap: '15px', background:'#fdfdff', padding:'24px', borderRadius:'12px', border:'1px solid #c6c5b9', marginBottom:'30px' }}>
+            <h3 style={{margin:0, color:'#393d3f'}}>Yeni Yönetici Ekle</h3>
+            <p style={{margin:'0', color:'#546a7b', fontSize:'14px'}}>
+              Yeni bir yönetici hesabı oluşturun. Kullanıcı email adresini doğruladıktan sonra sisteme giriş yapabilecektir.
+            </p>
+            
+            <div>
+              <label style={{color:'#546a7b', fontWeight:'600'}}>Email Adresi:</label>
+              <input 
+                type="email" 
+                name="email" 
+                value={adminForm.email || ''} 
+                onChange={handleAdminFormChange} 
+                required
+                placeholder="yonetici@hasere.com"
+                style={{width:'100%', padding:'10px', borderRadius:'6px', border:'1px solid #c6c5b9', marginTop:'5px'}}
+              />
+            </div>
+
+            <div>
+              <label style={{color:'#546a7b', fontWeight:'600'}}>Şifre:</label>
+              <input 
+                type="password" 
+                name="password" 
+                value={adminForm.password || ''} 
+                onChange={handleAdminFormChange} 
+                required
+                minLength="6"
+                placeholder="En az 6 karakter"
+                style={{width:'100%', padding:'10px', borderRadius:'6px', border:'1px solid #c6c5b9', marginTop:'5px'}}
+              />
+              <p style={{margin:'5px 0 0 0', fontSize:'12px', color:'#546a7b'}}>
+                💡 Güçlü bir şifre kullanın (en az 6 karakter)
+              </p>
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={loading}
+              style={{ padding: '14px', background: loading ? '#c6c5b9' : '#62929e', color: '#fdfdff', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', fontSize:'16px', borderRadius:'8px', fontWeight:'600' }}
+            >
+              {loading ? 'İşleniyor...' : 'Yönetici Ekle'}
+            </button>
+          </form>
+
+          {/* Mevcut Yöneticiler Listesi */}
+          <div>
+            <h3 style={{color:'#393d3f', marginBottom:'20px'}}>Mevcut Yöneticiler ({admins.length})</h3>
+            {admins.length === 0 ? (
+              <div style={{background:'#fdfdff', padding:'40px', borderRadius:'12px', border:'1px solid #c6c5b9', textAlign:'center'}}>
+                <p style={{color:'#546a7b', margin:0}}>Henüz yönetici yok.</p>
+              </div>
+            ) : (
+              <div style={{display:'flex', flexDirection:'column', gap:'15px'}}>
+                {admins.map(admin => (
+                  <div key={admin.id} style={{background:'#fdfdff', padding:'20px', borderRadius:'12px', border:'1px solid #c6c5b9', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                    <div>
+                      <h4 style={{margin:'0 0 5px 0', color:'#393d3f', fontSize:'16px'}}>
+                        {admin.email}
+                        {admin.id === user?.id && (
+                          <span style={{marginLeft:'10px', padding:'4px 8px', background:'#62929e', color:'#fdfdff', fontSize:'11px', borderRadius:'4px', fontWeight:'600'}}>
+                            SİZ
+                          </span>
+                        )}
+                      </h4>
+                      <p style={{margin:'0', color:'#546a7b', fontSize:'13px'}}>
+                        Oluşturulma: {new Date(admin.created_at).toLocaleDateString('tr-TR', { 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                    {admin.id !== user?.id && (
+                      <button 
+                        onClick={() => handleAdminDelete(admin.id, admin.email)}
+                        disabled={loading}
+                        style={{padding:'8px 16px', background:'#c6c5b9', color:'#393d3f', border:'none', cursor: loading ? 'not-allowed' : 'pointer', borderRadius:'6px', fontSize:'13px', fontWeight:'600'}}
+                      >
+                        Sil
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Bilgilendirme */}
+          <div style={{marginTop:'30px', padding:'20px', background:'#e8eef1', borderRadius:'12px', border:'1px solid #c6c5b9'}}>
+            <h4 style={{margin:'0 0 10px 0', color:'#393d3f', fontSize:'15px'}}>ℹ️ Önemli Bilgiler</h4>
+            <ul style={{margin:0, paddingLeft:'20px', color:'#546a7b', fontSize:'14px', lineHeight:'1.8'}}>
+              <li>Yeni eklenen yöneticiler email adreslerini doğrulamalıdır</li>
+              <li>Yöneticiler tüm admin paneli özelliklerine erişebilir</li>
+              <li>Kendi hesabınızı silemezsiniz</li>
+              <li>Silinen yöneticiler sisteme tekrar giriş yapamaz</li>
+            </ul>
           </div>
         </div>
       )}

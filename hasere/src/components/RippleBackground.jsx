@@ -57,7 +57,7 @@ export default function RippleBackground() {
       const elapsedTime = (Date.now() - startTimeRef.current) / 1000 // saniye cinsinden
       
       // 121 saniye geçtiyse ve 20 haşere varsa spawn'u durdur
-      if (elapsedTime > 121 && pestsRef.current.length >= 20) {
+      if (elapsedTime > 121 && pestsRef.current.length >= 5) {
         if (spawnIntervalRef.current) {
           clearInterval(spawnIntervalRef.current)
           spawnIntervalRef.current = null
@@ -66,7 +66,7 @@ export default function RippleBackground() {
       }
 
       // Maksimum 20 haşere
-      if (pestsRef.current.length >= 20) {
+      if (pestsRef.current.length >= 5) {
         return
       }
 
@@ -79,7 +79,7 @@ export default function RippleBackground() {
     }
 
     // Dakikada 10 haşere = 6 saniyede 1 haşere
-    spawnIntervalRef.current = setInterval(spawnPest, 6000)
+    spawnIntervalRef.current = setInterval(spawnPest, 10000)
 
     // Grid ve haşere çizim fonksiyonu
     const drawGrid = () => {

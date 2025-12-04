@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
+
 export default function HeroParallax() {
   const containerRef = useRef(null)
   const [currentWordIndex, setCurrentWordIndex] = useState(0)
@@ -13,7 +14,7 @@ export default function HeroParallax() {
   // Preload image
   useEffect(() => {
     const img = new Image()
-    img.src = '/dosy/hizmet.jpg'
+    img.src = '/dosy/heroalan.jpg'
     img.onload = () => setImageLoaded(true)
   }, [])
 
@@ -78,7 +79,7 @@ export default function HeroParallax() {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundImage: 'url(/dosy/hizmet.jpg)',
+        backgroundImage: 'url(/dosy/heroalan.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -87,26 +88,15 @@ export default function HeroParallax() {
         zIndex: 0
       }} />
 
-      {/* Black Overlay */}
+      {/* Gradient Overlay - Soldan Sağa */}
       <div style={{
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        background: 'rgba(0, 0, 0, 0.25)',
+        background: 'linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.2) 70%, transparent 100%)',
         zIndex: 1
-      }} />
-
-      {/* Left Gradient */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        bottom: 0,
-        width: '40%',
-        background: 'linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%)',
-        zIndex: 2
       }} />
 
       {/* İçerik */}
